@@ -103,7 +103,7 @@ func QueenMoves(p *Position, i uint8) []Move {
 	return []Move{}
 }
 
-func main() {
+func main1() {
 	fmt.Println(GetRankFile(63))
 	p := Position{Board{}, White, 0, Castling{}, 0}
 
