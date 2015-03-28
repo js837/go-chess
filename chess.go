@@ -37,6 +37,7 @@ const (
 	BK = King | Black
 )
 
+const OO = NoPiece // Alias for NoPiece
 const N, E, S, W = +8, +1, -1, -8
 
 type Piece uint8
@@ -72,6 +73,7 @@ func GetRankFile(i int) (int, int) {
 }
 
 func RookMoves(p *Position, from int) []Move {
+	// Get the possible moves o
 	// TODO: Get the colour from the position
 	myColour := p.board[from].Color()
 
@@ -101,14 +103,4 @@ func RookMoves(p *Position, from int) []Move {
 func QueenMoves(p *Position, i uint8) []Move {
 
 	return []Move{}
-}
-
-func main1() {
-	fmt.Println(GetRankFile(63))
-	p := Position{Board{}, White, 0, Castling{}, 0}
-
-	for _, move := range RookMoves(&p, 18) {
-		fmt.Println(move)
-
-	}
 }

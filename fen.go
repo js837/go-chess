@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -15,18 +14,7 @@ import (
 //}
 
 func getPiece(char rune) Piece {
-	//		WP = Pawn | White
-	//	WN = Knight | White
-	//	WB = Bishop | White
-	//	WR = Rook | White
-	//	WQ = Queen | White
-	//	WK = King | White
-	//	BP = Pawn | Black
-	//	BN = Knight | Black
-	//	BB = Bishop | Black
-	//	BR = Rook | Black
-	//	BQ = Queen | Black
-	//	BK = King | Black
+
 	switch char {
 	case 'P':
 		return WP
@@ -61,6 +49,7 @@ func getPiece(char rune) Piece {
 
 func PositionFromBoardFen(boardFen string) Board {
 	// boardFen eg. rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR
+	// TODO: Add error checking.
 	board := Board{}
 	var index int
 	for k, rankStr := range strings.Split(boardFen, "/") {

@@ -10,6 +10,9 @@ func SetFen(w http.ResponseWriter, request *http.Request) {
 
 	defer request.Body.Close()
 	body, _ := ioutil.ReadAll(request.Body)
+
+	fmt.Println(PositionFromBoardFen(string(body)))
+
 	fmt.Fprintf(w, string(body))
 }
 
