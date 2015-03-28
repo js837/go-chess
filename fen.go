@@ -47,10 +47,10 @@ func getPiece(char rune) Piece {
 	}
 }
 
-func PositionFromBoardFen(boardFen string) Board {
+func PositionFromBoardFen(boardFen string) Position {
 	// boardFen eg. rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR
 	// TODO: Add error checking.
-	board := Board{}
+	position := Position{}
 	var index int
 	for k, rankStr := range strings.Split(boardFen, "/") {
 		index = (7 - k) * 8
@@ -59,16 +59,16 @@ func PositionFromBoardFen(boardFen string) Board {
 			if piece == NoPiece {
 				n, _ := strconv.Atoi(string(char))
 				for m := 0; m < n; m++ {
-					board[index] = NoPiece
+					position.board[index] = NoPiece
 					index++
 				}
 			} else {
-				board[index] = piece
+				position.board[index] = piece
 				index++
 			}
 		}
 	}
-	return board
+	return position
 }
 
 //func PositionToFen(position *Position) string {

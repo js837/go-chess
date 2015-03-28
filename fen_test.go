@@ -6,7 +6,7 @@ import (
 
 func TestPositionFromBoardFen(t *testing.T) {
 
-	board := PositionFromBoardFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")
+	board := PositionFromBoardFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR").board
 	starting_board := Board{
 		WR, WN, WB, WQ, WK, WB, WN, WR,
 		WP, WP, WP, WP, WP, WP, WP, WP,

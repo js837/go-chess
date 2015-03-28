@@ -11,8 +11,10 @@ func SetFen(w http.ResponseWriter, request *http.Request) {
 	defer request.Body.Close()
 	body, _ := ioutil.ReadAll(request.Body)
 
-	fmt.Println(PositionFromBoardFen(string(body)))
-
+	p := PositionFromBoardFen(string(body))
+	for _, move := range p.GetMoves() {
+		fmt.Println(move)
+	}
 	fmt.Fprintf(w, string(body))
 }
 
