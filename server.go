@@ -18,14 +18,7 @@ func SetFen(w http.ResponseWriter, request *http.Request) {
 	//		fmt.Println(move)
 	//	}
 
-	var moves []Move
-
-	for i := 0; i < 1000000; i++ {
-		moves = p.GetMoves(p.turn)
-		for _, move := range moves {
-			p.ApplyMove(move)
-		}
-	}
+	p.GetMoves(p.turn)
 
 	fmt.Fprintf(w, string(fen))
 }

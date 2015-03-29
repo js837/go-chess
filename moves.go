@@ -1,6 +1,8 @@
 package main
 
-//import "fmt"
+import (
+	"fmt"
+)
 
 type Move struct {
 	from      int
@@ -8,27 +10,46 @@ type Move struct {
 	promotion Piece
 }
 
-func (p *Position) GetMoves(colour Colour) []Move {
-	var moves = []Move{}
-	for from, piece := range p.board {
-		if piece.Color() == colour {
-			switch piece.Type() {
-			case Pawn:
-				moves = append(moves, PawnMoves(p, from)...)
-			case Queen:
-				moves = append(moves, QueenMoves(p, from)...)
-			case Rook:
-				moves = append(moves, RookMoves(p, from)...)
-			case Bishop:
-				moves = append(moves, BishopMoves(p, from)...)
-			case Knight:
-				moves = append(moves, KnightMoves(p, from)...)
-			case King:
-				moves = append(moves, KingMoves(p, from)...)
+func (p *Position) GetMoves(colour Colour) {
+
+	moves := make(chan Move)
+	done := make(chan bool)
+
+	go func() {
+		for {
+			j, more := <-moves
+			if more {
+				fmt.Println(j)
+			} else {
+				done <- true
+				return
 			}
 		}
+	}()
+
+	for from, piece := range p.board {
+		go func(from int, piece Piece) {
+			if piece.Color() == colour {
+				switch piece.Type() {
+				case Pawn:
+					PawnMoves(p, from, moves)
+				case Queen:
+					QueenMoves(p, from, moves)
+				case Rook:
+					RookMoves(p, from, moves)
+				case Bishop:
+					BishopMoves(p, from, moves)
+				case Knight:
+					KnightMoves(p, from, moves)
+				case King:
+					KingMoves(p, from, moves)
+				}
+			}
+		}(from, piece)
 	}
-	return moves
+
+	<-done
+
 }
 
 func (p *Position) ApplyMove(m Move) Position {
@@ -52,11 +73,12 @@ func (p *Position) ApplyMove(m Move) Position {
 	return newPosition
 }
 
-func QueenMoves(p *Position, from int) []Move {
-	return append(RookMoves(p, from), BishopMoves(p, from)...)
+func QueenMoves(p *Position, from int, moves chan Move) {
+	RookMoves(p, from, moves)
+	BishopMoves(p, from, moves)
 }
 
-func RookMoves(p *Position, from int) []Move {
+func RookMoves(p *Position, from int, moves chan Move) {
 	// Get the possible moves o
 	// TODO: Get the colour from the position
 	myColour := p.board[from].Color()
@@ -65,23 +87,21 @@ func RookMoves(p *Position, from int) []Move {
 	directions := [4]int{N, E, S, W}
 	multLimits := [4]int{7 - rank, 7 - file, rank, file} // N E S W
 
-	var moves = []Move{}
 	for dir := 0; dir < 4; dir++ {
 		for mult := 1; mult <= multLimits[dir]; mult++ {
 			to := from + mult*directions[dir]
 			if p.board[to] == NoPiece {
 				// Empty space
-				moves = append(moves, Move{from, to, NoPiece})
+				moves <- Move{from, to, NoPiece}
 			} else {
 				// Hit a piece
 				if p.board[to].Color() != myColour {
-					moves = append(moves, Move{from, to, NoPiece})
+					moves <- Move{from, to, NoPiece}
 				}
 				break
 			}
 		}
 	}
-	return moves
 }
 
 func min(a int, b int) int {
@@ -93,11 +113,10 @@ func min(a int, b int) int {
 
 }
 
-func KnightMoves(p *Position, from int) []Move {
+func KnightMoves(p *Position, from int, moves chan Move) {
 	// Get the possible moves o
 	// TODO: Get the colour from the position
 	myColour := p.board[from].Color()
-	var moves = []Move{}
 
 	rank, file := GetRankFile(from)
 
@@ -116,16 +135,15 @@ func KnightMoves(p *Position, from int) []Move {
 				if multLimits[j] >= 1 {
 					to := from + 2*dir + dirs[j]
 					if p.board[to] == NoPiece || p.board[to].Color() != myColour {
-						moves = append(moves, Move{from, to, NoPiece})
+						moves <- Move{from, to, NoPiece}
 					}
 				}
 			}
 		}
 	}
-	return moves
 }
 
-func KingMoves(p *Position, from int) []Move {
+func KingMoves(p *Position, from int, moves chan Move) {
 
 	// Get the possible moves o
 	// TODO: Get the colour from the position
@@ -143,27 +161,24 @@ func KingMoves(p *Position, from int) []Move {
 		min(7-rank, file),
 	}
 
-	var moves = []Move{}
 	for dir, _ := range directions {
 		for mult := 1; mult <= min(multLimits[dir], 1); mult++ {
 			to := from + mult*directions[dir]
 			if p.board[to] == NoPiece {
 				// Empty space
-				moves = append(moves, Move{from, to, NoPiece})
+				moves <- Move{from, to, NoPiece}
 			} else {
 				// Hit a piece
 				if p.board[to].Color() != myColour {
-					moves = append(moves, Move{from, to, NoPiece})
+					moves <- Move{from, to, NoPiece}
 				}
 				break
 			}
 		}
 	}
-	return moves
-
 }
 
-func BishopMoves(p *Position, from int) []Move {
+func BishopMoves(p *Position, from int, moves chan Move) {
 	// Get the possible moves o
 	// TODO: Get the colour from the position
 	myColour := p.board[from].Color()
@@ -177,33 +192,29 @@ func BishopMoves(p *Position, from int) []Move {
 		min(7-rank, file),
 	}
 
-	var moves = []Move{}
 	for dir := 0; dir < 4; dir++ {
 		for mult := 1; mult <= multLimits[dir]; mult++ {
 			to := from + mult*directions[dir]
 			if p.board[to] == NoPiece {
 				// Empty space
-				moves = append(moves, Move{from, to, NoPiece})
+				moves <- Move{from, to, NoPiece}
 			} else {
 				// Hit a piece
 				if p.board[to].Color() != myColour {
-					moves = append(moves, Move{from, to, NoPiece})
+					moves <- Move{from, to, NoPiece}
 				}
 				break
 			}
 		}
 	}
-	return moves
 }
 
-func PawnMoves(p *Position, from int) []Move {
+func PawnMoves(p *Position, from int, moves chan Move) {
 	// Get the possible moves o
 	// TODO: Get the colour from the position
 	myColour := p.board[from].Color()
 
 	rank, file := GetRankFile(from)
-
-	var moves = []Move{}
 
 	var localFirstRank, localPromoRank, localFinalRank, localN int
 
@@ -217,7 +228,7 @@ func PawnMoves(p *Position, from int) []Move {
 
 	// Not legal position, but included for safety
 	if rank == localFinalRank {
-		return moves
+		return
 	}
 
 	// Promotion (only Queen for now)
@@ -230,22 +241,20 @@ func PawnMoves(p *Position, from int) []Move {
 
 	// Single move
 	if to := from + localN; p.board[to] == NoPiece {
-		moves = append(moves, Move{from, to, promotion})
+		moves <- Move{from, to, promotion}
 
 		// Double move
 		if to = to + localN; rank == localFirstRank && p.board[to] == NoPiece {
-			moves = append(moves, Move{from, to, NoPiece})
+			moves <- Move{from, to, NoPiece}
 		}
 
 	}
 	// Take NE
 	if to := from + localN + E; file != 7 && p.board[to] != NoPiece && p.board[to].Color() != myColour {
-		moves = append(moves, Move{from, to, promotion})
+		moves <- Move{from, to, promotion}
 	}
 	// Take NW
 	if to := from + localN + W; file != 0 && p.board[to] != NoPiece && p.board[to].Color() != myColour {
-		moves = append(moves, Move{from, to, promotion})
+		moves <- Move{from, to, promotion}
 	}
-
-	return moves
 }
