@@ -15,7 +15,13 @@ func SetFen(w http.ResponseWriter, request *http.Request) {
 	for _, move := range p.GetMoves() {
 		fmt.Println(move)
 	}
-	fmt.Fprintf(w, string(body))
+
+	firstMove := p.GetMoves()[0]
+	newP := p.ApplyMove(firstMove)
+
+	fen := PositionToBoardFen(&newP)
+
+	fmt.Fprintf(w, string(fen))
 }
 
 func main() {

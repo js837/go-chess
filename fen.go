@@ -47,6 +47,40 @@ func getPiece(char rune) Piece {
 	}
 }
 
+func getChar(piece Piece) rune {
+
+	switch piece {
+	case WP:
+		return 'P'
+	case WN:
+		return 'N'
+	case WB:
+		return 'B'
+	case WR:
+		return 'R'
+	case WQ:
+		return 'Q'
+	case WK:
+		return 'K'
+
+	case BP:
+		return 'p'
+	case BN:
+		return 'n'
+	case BB:
+		return 'b'
+	case BR:
+		return 'r'
+	case BQ:
+		return 'q'
+	case BK:
+		return 'k'
+	default:
+		return '-'
+	}
+
+}
+
 func PositionFromBoardFen(boardFen string) Position {
 	// boardFen eg. rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR
 	// TODO: Add error checking.
@@ -69,6 +103,39 @@ func PositionFromBoardFen(boardFen string) Position {
 		}
 	}
 	return position
+}
+
+func PositionToBoardFen(p *Position) string {
+	var blankCount = 0
+	boardFen := ""
+	for i := 56; i >= 0; i -= 8 {
+
+		for j := 0; j < 8; j++ {
+			piece := p.board[i+j]
+			if piece == NoPiece {
+				blankCount++
+			} else {
+				// Write blanks
+				if blankCount > 0 {
+					boardFen += strconv.Itoa(blankCount)
+				}
+
+				// Write piece
+				boardFen += string(getChar(piece))
+
+				// Reset
+				blankCount = 0
+			}
+		}
+		if blankCount > 0 {
+			boardFen += strconv.Itoa(blankCount)
+			blankCount = 0
+		}
+		if i != 0 {
+			boardFen += "/"
+		}
+	}
+	return boardFen
 }
 
 //func PositionToFen(position *Position) string {

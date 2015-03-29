@@ -11,7 +11,7 @@
 
 
 <div class="col">
-  <div id="board2" style="width: 400px"></div>
+  <div id="board" style="width: 400px"></div>
   <input type="button" id="startBtn" value="Start" />
   <input type="button" id="clearBtn" value="Clear" />
   <input type="button" id="submitBtn" value="Submit" />
@@ -30,16 +30,17 @@ function isTouchDevice() {
 $(document).ready(function() {
 
   // example 2
-  var board2 = new ChessBoard('board2', {
+  var board = new ChessBoard('board', {
     draggable: true,
     dropOffBoard: 'trash',
     sparePieces: true
   });
-  $('#startBtn').on('click', board2.start);
-  $('#clearBtn').on('click', board2.clear);
+  $('#startBtn').on('click', board.start);
+  $('#clearBtn').on('click', board.clear);
   $('#submitBtn').on('click', function(){
-      $.post('setfen', board2.fen()).done(function(data){
-		  console.log(data)
+      $.post('setfen', board.fen()).done(function(fen){
+		  console.log(fen)
+		  board.position(fen);
 	  })
   });
 
