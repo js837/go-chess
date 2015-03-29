@@ -127,6 +127,7 @@ func PositionToBoardFen(p *Position) string {
 				blankCount = 0
 			}
 		}
+		// Write blanks at the end of a row.
 		if blankCount > 0 {
 			boardFen += strconv.Itoa(blankCount)
 			blankCount = 0
@@ -137,12 +138,3 @@ func PositionToBoardFen(p *Position) string {
 	}
 	return boardFen
 }
-
-//func PositionToFen(position *Position) string {
-//	// Examples:
-//	// rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-//	// rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2
-
-//	components := strings.Split("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2", " ")
-
-//}

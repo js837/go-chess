@@ -9,17 +9,21 @@ import (
 func SetFen(w http.ResponseWriter, request *http.Request) {
 
 	defer request.Body.Close()
-	body, _ := ioutil.ReadAll(request.Body)
+	fen, _ := ioutil.ReadAll(request.Body)
 
-	p := PositionFromBoardFen(string(body))
+	p := PositionFromBoardFen(string(fen))
 	for _, move := range p.GetMoves() {
 		fmt.Println(move)
 	}
 
-	firstMove := p.GetMoves()[0]
-	newP := p.ApplyMove(firstMove)
+	moves := p.GetMoves()
+	if len(moves) > 0 {
+		firstMove := moves[0]
+		newP := p.ApplyMove(firstMove)
 
-	fen := PositionToBoardFen(&newP)
+		fen = []byte(PositionToBoardFen(&newP))
+
+	}
 
 	fmt.Fprintf(w, string(fen))
 }
