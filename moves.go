@@ -8,10 +8,10 @@ type Move struct {
 	promotion Piece
 }
 
-func (p *Position) GetMoves() []Move {
+func (p *Position) GetMoves(colour Colour) []Move {
 	var moves = []Move{}
 	for from, piece := range p.board {
-		if piece.Color() == White {
+		if piece.Color() == colour {
 			switch piece.Type() {
 			case Pawn:
 				moves = append(moves, PawnMoves(p, from)...)
@@ -36,7 +36,7 @@ func (p *Position) ApplyMove(m Move) Position {
 	newBoard := Board(p.board)
 
 	if m.promotion != NoPiece {
-		newBoard[m.to] = newBoard[m.promotion]
+		newBoard[m.to] = m.promotion
 	} else {
 		newBoard[m.to] = newBoard[m.from]
 	}
@@ -204,40 +204,47 @@ func PawnMoves(p *Position, from int) []Move {
 	rank, file := GetRankFile(from)
 
 	var moves = []Move{}
-	var localFirstRank, localPromoRank, localN int
+
+	var localFirstRank, localPromoRank, localFinalRank, localN int
 
 	if myColour == White {
-		localFirstRank, localPromoRank = 1, 6
+		localFirstRank, localPromoRank, localFinalRank = 1, 6, 7
 		localN = N
 	} else {
-		localFirstRank, localPromoRank = 6, 1
+		localFirstRank, localPromoRank, localFinalRank = 6, 1, 0
 		localN = S
 	}
 
-	// Promotion
-	if to := from + localN; rank == localPromoRank && p.board[to] == NoPiece {
-		moves = append(moves, Move{from, to, Queen}) // Only queen for now.
+	// Not legal position, but included for safety
+	if rank == localFinalRank {
+		return moves
+	}
+
+	// Promotion (only Queen for now)
+	var promotion Piece
+	if rank == localPromoRank {
+		promotion = Queen
 	} else {
-		// Single move
-		if to := from + localN; p.board[to] == NoPiece {
+		promotion = NoPiece
+	}
+
+	// Single move
+	if to := from + localN; p.board[to] == NoPiece {
+		moves = append(moves, Move{from, to, promotion})
+
+		// Double move
+		if to = to + localN; rank == localFirstRank && p.board[to] == NoPiece {
 			moves = append(moves, Move{from, to, NoPiece})
-
-			// Double move
-			if to = to + localN; rank == localFirstRank && p.board[to] == NoPiece {
-				moves = append(moves, Move{from, to, NoPiece})
-			}
-
 		}
 
 	}
-
 	// Take NE
 	if to := from + localN + E; file != 7 && p.board[to] != NoPiece && p.board[to].Color() != myColour {
-		moves = append(moves, Move{from, to, NoPiece})
+		moves = append(moves, Move{from, to, promotion})
 	}
 	// Take NW
 	if to := from + localN + W; file != 0 && p.board[to] != NoPiece && p.board[to].Color() != myColour {
-		moves = append(moves, Move{from, to, NoPiece})
+		moves = append(moves, Move{from, to, promotion})
 	}
 
 	return moves
