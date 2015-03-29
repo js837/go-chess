@@ -1,5 +1,7 @@
 package main
 
+//import "fmt"
+
 type Move struct {
 	from      int
 	to        int
@@ -19,11 +21,35 @@ func (p *Position) GetMoves() []Move {
 				moves = append(moves, RookMoves(p, from)...)
 			case Bishop:
 				moves = append(moves, BishopMoves(p, from)...)
+			case Knight:
+				moves = append(moves, KnightMoves(p, from)...)
+			case King:
+				moves = append(moves, KingMoves(p, from)...)
 			}
 		}
-
 	}
 	return moves
+}
+
+func (p *Position) ApplyMove(m Move) Position {
+
+	newBoard := Board(p.board)
+
+	if m.promotion != NoPiece {
+		newBoard[m.to] = newBoard[m.promotion]
+	} else {
+		newBoard[m.to] = newBoard[m.from]
+	}
+	newBoard[m.from] = NoPiece
+
+	newPosition := Position{
+		newBoard,
+		^p.turn,
+		p.score,
+		p.castling,
+		p.enPassant,
+	}
+	return newPosition
 }
 
 func QueenMoves(p *Position, from int) []Move {
@@ -59,11 +85,81 @@ func RookMoves(p *Position, from int) []Move {
 }
 
 func min(a int, b int) int {
-	if a < b {
+	if a <= b {
 		return a
 	} else {
 		return b
 	}
+
+}
+
+func KnightMoves(p *Position, from int) []Move {
+	// Get the possible moves o
+	// TODO: Get the colour from the position
+	myColour := p.board[from].Color()
+	var moves = []Move{}
+
+	rank, file := GetRankFile(from)
+
+	dirs := [4]int{N, E, S, W}
+	multLimits := [4]int{7 - rank, 7 - file, rank, file} // N E S W
+
+	for i, dir := range dirs {
+		var a [2]int
+		if dir == N || dir == S {
+			a = [2]int{1, 3}
+		} else {
+			a = [2]int{0, 2}
+		}
+		if multLimits[i] >= 2 {
+			for _, j := range a {
+				if multLimits[j] >= 1 {
+					to := from + 2*dir + dirs[j]
+					if p.board[to] == NoPiece || p.board[to].Color() != myColour {
+						moves = append(moves, Move{from, to, NoPiece})
+					}
+				}
+			}
+		}
+	}
+	return moves
+}
+
+func KingMoves(p *Position, from int) []Move {
+
+	// Get the possible moves o
+	// TODO: Get the colour from the position
+	myColour := p.board[from].Color()
+
+	rank, file := GetRankFile(from)
+	directions := [8]int{N, E, S, W, N + E, E + S, S + W, W + N}
+	multLimits := [8]int{7 - rank,
+		7 - file,
+		rank,
+		file,
+		min(7-rank, 7-file),
+		min(7-file, rank),
+		min(rank, file),
+		min(7-rank, file),
+	}
+
+	var moves = []Move{}
+	for dir, _ := range directions {
+		for mult := 1; mult <= min(multLimits[dir], 1); mult++ {
+			to := from + mult*directions[dir]
+			if p.board[to] == NoPiece {
+				// Empty space
+				moves = append(moves, Move{from, to, NoPiece})
+			} else {
+				// Hit a piece
+				if p.board[to].Color() != myColour {
+					moves = append(moves, Move{from, to, NoPiece})
+				}
+				break
+			}
+		}
+	}
+	return moves
 
 }
 
@@ -105,17 +201,17 @@ func PawnMoves(p *Position, from int) []Move {
 	// TODO: Get the colour from the position
 	myColour := p.board[from].Color()
 
-	rank, _ := GetRankFile(from)
+	rank, file := GetRankFile(from)
 
 	var moves = []Move{}
-	var localFirstRank, localPromoRank, localN, localE, localW int
+	var localFirstRank, localPromoRank, localN int
 
 	if myColour == White {
 		localFirstRank, localPromoRank = 1, 6
-		localN, localE, localW = N, E, W
+		localN = N
 	} else {
 		localFirstRank, localPromoRank = 6, 1
-		localN, localE, localW = -N, -E, -W
+		localN = S
 	}
 
 	// Promotion
@@ -136,11 +232,11 @@ func PawnMoves(p *Position, from int) []Move {
 	}
 
 	// Take NE
-	if to := from + localN + localE; p.board[to] != NoPiece && p.board[to].Color() != myColour {
+	if to := from + localN + E; file != 7 && p.board[to] != NoPiece && p.board[to].Color() != myColour {
 		moves = append(moves, Move{from, to, NoPiece})
 	}
 	// Take NW
-	if to := from + localN + localW; p.board[to] != NoPiece && p.board[to].Color() != myColour {
+	if to := from + localN + W; file != 0 && p.board[to] != NoPiece && p.board[to].Color() != myColour {
 		moves = append(moves, Move{from, to, NoPiece})
 	}
 
