@@ -39,8 +39,8 @@ const N, E, S, W = +8, +1, -8, -1
 type Piece uint8
 type Colour uint8
 
-func (p Piece) Color() Colour { return Colour(p) & 0x01 }
-func (p Piece) Type() Piece   { return Piece(p) &^ 0x01 }
+func (p Piece) Colour() Colour { return Colour(p) & 0x01 }
+func (p Piece) Type() Piece    { return Piece(p) &^ 0x01 }
 
 type Castling struct {
 	whiteKingside  bool

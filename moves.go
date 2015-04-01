@@ -11,7 +11,7 @@ type Move struct {
 func (p *Position) GetMoves(colour Colour) []Move {
 	var moves = []Move{}
 	for from, piece := range p.board {
-		if piece.Color() == colour {
+		if piece.Colour() == colour {
 			switch piece.Type() {
 			case Pawn:
 				moves = append(moves, PawnMoves(p, from)...)
@@ -59,7 +59,7 @@ func QueenMoves(p *Position, from int) []Move {
 func RookMoves(p *Position, from int) []Move {
 	// Get the possible moves o
 	// TODO: Get the colour from the position
-	myColour := p.board[from].Color()
+	myColour := p.board[from].Colour()
 
 	rank, file := GetRankFile(from)
 	directions := [4]int{N, E, S, W}
@@ -74,7 +74,7 @@ func RookMoves(p *Position, from int) []Move {
 				moves = append(moves, Move{from, to, NoPiece})
 			} else {
 				// Hit a piece
-				if p.board[to].Color() != myColour {
+				if p.board[to].Colour() != myColour {
 					moves = append(moves, Move{from, to, NoPiece})
 				}
 				break
@@ -96,7 +96,7 @@ func min(a int, b int) int {
 func KnightMoves(p *Position, from int) []Move {
 	// Get the possible moves o
 	// TODO: Get the colour from the position
-	myColour := p.board[from].Color()
+	myColour := p.board[from].Colour()
 	var moves = []Move{}
 
 	rank, file := GetRankFile(from)
@@ -115,7 +115,7 @@ func KnightMoves(p *Position, from int) []Move {
 			for _, j := range a {
 				if multLimits[j] >= 1 {
 					to := from + 2*dir + dirs[j]
-					if p.board[to] == NoPiece || p.board[to].Color() != myColour {
+					if p.board[to] == NoPiece || p.board[to].Colour() != myColour {
 						moves = append(moves, Move{from, to, NoPiece})
 					}
 				}
@@ -129,7 +129,7 @@ func KingMoves(p *Position, from int) []Move {
 
 	// Get the possible moves o
 	// TODO: Get the colour from the position
-	myColour := p.board[from].Color()
+	myColour := p.board[from].Colour()
 
 	rank, file := GetRankFile(from)
 	directions := [8]int{N, E, S, W, N + E, E + S, S + W, W + N}
@@ -152,7 +152,7 @@ func KingMoves(p *Position, from int) []Move {
 				moves = append(moves, Move{from, to, NoPiece})
 			} else {
 				// Hit a piece
-				if p.board[to].Color() != myColour {
+				if p.board[to].Colour() != myColour {
 					moves = append(moves, Move{from, to, NoPiece})
 				}
 				break
@@ -166,7 +166,7 @@ func KingMoves(p *Position, from int) []Move {
 func BishopMoves(p *Position, from int) []Move {
 	// Get the possible moves o
 	// TODO: Get the colour from the position
-	myColour := p.board[from].Color()
+	myColour := p.board[from].Colour()
 
 	rank, file := GetRankFile(from)
 	directions := [4]int{N + E, E + S, S + W, W + N}
@@ -186,7 +186,7 @@ func BishopMoves(p *Position, from int) []Move {
 				moves = append(moves, Move{from, to, NoPiece})
 			} else {
 				// Hit a piece
-				if p.board[to].Color() != myColour {
+				if p.board[to].Colour() != myColour {
 					moves = append(moves, Move{from, to, NoPiece})
 				}
 				break
@@ -199,7 +199,7 @@ func BishopMoves(p *Position, from int) []Move {
 func PawnMoves(p *Position, from int) []Move {
 	// Get the possible moves o
 	// TODO: Get the colour from the position
-	myColour := p.board[from].Color()
+	myColour := p.board[from].Colour()
 
 	rank, file := GetRankFile(from)
 
@@ -239,11 +239,11 @@ func PawnMoves(p *Position, from int) []Move {
 
 	}
 	// Take NE
-	if to := from + localN + E; file != 7 && p.board[to] != NoPiece && p.board[to].Color() != myColour {
+	if to := from + localN + E; file != 7 && p.board[to] != NoPiece && p.board[to].Colour() != myColour {
 		moves = append(moves, Move{from, to, promotion})
 	}
 	// Take NW
-	if to := from + localN + W; file != 0 && p.board[to] != NoPiece && p.board[to].Color() != myColour {
+	if to := from + localN + W; file != 0 && p.board[to] != NoPiece && p.board[to].Colour() != myColour {
 		moves = append(moves, Move{from, to, promotion})
 	}
 
