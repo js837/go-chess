@@ -22,7 +22,15 @@ func SetFen(w http.ResponseWriter, request *http.Request) {
 
 	output := p.PieceEval()
 
-	fmt.Fprintf(w, fmt.Sprintf("x = %.6f\n", output))
+	root := EvalNode{p, 0, []EvalNode{}}
+	root.GenerateTree(2)
+
+	//	for i, el := range root.children {
+	//		fmt.Printf("%d %.6f", i, el.eval)
+	//	}
+
+	fmt.Fprintf(w, fmt.Sprintf("%.6f", output))
+
 }
 
 func main() {

@@ -42,9 +42,16 @@ func (p *Position) ApplyMove(m Move) Position {
 	}
 	newBoard[m.from] = NoPiece
 
+	var newColour Colour
+	if p.turn == White {
+		newColour = Black
+	} else {
+		newColour = White
+	}
+
 	newPosition := Position{
 		newBoard,
-		^p.turn,
+		newColour,
 		p.score,
 		p.castling,
 		p.enPassant,
