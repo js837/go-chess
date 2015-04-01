@@ -18,16 +18,11 @@ func SetFen(w http.ResponseWriter, request *http.Request) {
 	//		fmt.Println(move)
 	//	}
 
-	var moves []Move
+	//var moves []Move
 
-	for i := 0; i < 1000000; i++ {
-		moves = p.GetMoves(p.turn)
-		for _, move := range moves {
-			p.ApplyMove(move)
-		}
-	}
+	output := p.PieceEval()
 
-	fmt.Fprintf(w, string(fen))
+	fmt.Fprintf(w, fmt.Sprintf("x = %.6f\n", output))
 }
 
 func main() {

@@ -29,6 +29,9 @@ func (position *Position) PieceEval() float64 {
 			pieceValue = KNIGHT_WEIGHT
 		case King:
 			pieceValue = KING_WEIGHT
+		default:
+			pieceValue = 0
+
 		}
 
 		if piece.Colour() == position.turn {
