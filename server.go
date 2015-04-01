@@ -25,7 +25,7 @@ func SetFen(w http.ResponseWriter, request *http.Request) {
 
 func main() {
 
-	http.HandleFunc("/setfens", SetFen)
+	http.HandleFunc("/setfen", SetFen)
 
 	http.Handle("/", http.FileServer(http.Dir(".")))
 	http.ListenAndServe(":8000", nil)
