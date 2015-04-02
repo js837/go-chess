@@ -42,6 +42,10 @@ type Colour uint8
 func (p Piece) Colour() Colour { return Colour(p) & 0x01 }
 func (p Piece) Type() Piece    { return Piece(p) &^ 0x01 }
 
+func (c Colour) Switch() Colour {
+	return Colour(c ^ 0x01)
+}
+
 type Castling struct {
 	whiteKingside  bool
 	whiteQueenside bool

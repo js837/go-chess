@@ -18,3 +18,13 @@ func TestGetRankFile(t *testing.T) {
 		t.Error("GetRankFile did not work as expected.")
 	}
 }
+
+func TestSwitchColour(t *testing.T) {
+
+	w := Colour(White)
+	b := Colour(Black)
+
+	if w.Switch() != b || b.Switch() != w {
+		t.Error("OtherColour did not work as expected.")
+	}
+}

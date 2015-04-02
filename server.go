@@ -20,7 +20,7 @@ func SetFen(w http.ResponseWriter, request *http.Request) {
 
 	//var moves []Move
 
-	output := p.PieceEval()
+	//output := p.PieceEval(p.turn)
 
 	root := EvalNode{p, 0, []EvalNode{}}
 	root.GenerateTree(2)
@@ -29,7 +29,20 @@ func SetFen(w http.ResponseWriter, request *http.Request) {
 	//		fmt.Printf("%d %.6f", i, el.eval)
 	//	}
 
-	fmt.Fprintf(w, fmt.Sprintf("%.6f", output))
+	best := minimax(&p, 3, White)
+	var bestFen string
+
+	for _, move := range p.GetMoves(p.turn) {
+		newPosition := p.ApplyMove(move)
+		if newPosition.PieceEval(p.turn) == best {
+			bestFen = PositionToBoardFen(&newPosition)
+			break
+		}
+	}
+
+	fmt.Println("Best:", best)
+
+	fmt.Fprintf(w, bestFen)
 
 }
 
@@ -38,5 +51,5 @@ func main() {
 	http.HandleFunc("/setfen", SetFen)
 
 	http.Handle("/", http.FileServer(http.Dir(".")))
-	http.ListenAndServe(":8000", nil)
+	http.ListenAndServe(":8005", nil)
 }

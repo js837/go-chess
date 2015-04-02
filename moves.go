@@ -42,16 +42,9 @@ func (p *Position) ApplyMove(m Move) Position {
 	}
 	newBoard[m.from] = NoPiece
 
-	var newColour Colour
-	if p.turn == White {
-		newColour = Black
-	} else {
-		newColour = White
-	}
-
 	newPosition := Position{
 		newBoard,
-		newColour,
+		p.turn.Switch(),
 		p.score,
 		p.castling,
 		p.enPassant,
@@ -89,15 +82,6 @@ func RookMoves(p *Position, from int) []Move {
 		}
 	}
 	return moves
-}
-
-func min(a int, b int) int {
-	if a <= b {
-		return a
-	} else {
-		return b
-	}
-
 }
 
 func KnightMoves(p *Position, from int) []Move {
