@@ -8,16 +8,14 @@
 </head>
 <body>
 
-
-
 <div class="col">
   <div id="board" style="width: 400px"></div>
   <input type="button" id="startBtn" value="Start" />
   <input type="button" id="clearBtn" value="Clear" />
-  <input type="button" id="submitBtn" value="Submit" />
 
+  <input type="button" id="playWhite" value="Play white" />
+  <input type="button" id="playBlack" value="Play black" />
 </div>
-
 
 <script src="static/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="static/libs/chessboardjs/0.3.0/js/chessboard.js"></script>
@@ -28,25 +26,27 @@ function isTouchDevice() {
 }
 
 $(document).ready(function() {
-
-  // example 2
   var board = new ChessBoard('board', {
     draggable: true,
     dropOffBoard: 'trash',
     sparePieces: true
   });
-  $('#startBtn').on('click', board.start);
-  $('#clearBtn').on('click', board.clear);
-  $('#submitBtn').on('click', function(){
-	  
-	  var boardFen = board.fen()
-	  var fen = boardFen + ' b KQkq b2 0 1' 
-	
-      $.post('setfen', fen).done(function(fenNew){
-		  console.log(fenNew)
+ 
+  function playColour(colour){
+	var boardFen = board.fen()
+	var rest = 'KQkq - 0 0'
+	var fen = boardFen + ' ' + colour + ' ' + rest
+	  $.post('setfen', fen).done(function(fenNew){
+		  console.log(fen, '->', fenNew)
 		  board.position(fenNew);
 	  })
-  });
+  }
+
+  $('#startBtn').on('click', board.start);
+  $('#clearBtn').on('click', board.clear);
+  
+  $('#playWhite').on('click', playColour.bind(this, 'w'));
+  $('#playBlack').on('click', playColour.bind(this, 'b'));
 
 });
 </script>

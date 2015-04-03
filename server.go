@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	//"math/rand"
+	"math/rand"
 	"net/http"
-	//"time"
+	"time"
 )
 
 func SetFen(w http.ResponseWriter, request *http.Request) {
@@ -15,12 +15,14 @@ func SetFen(w http.ResponseWriter, request *http.Request) {
 
 	p := FromFen(string(fen))
 
-	fmt.Println(p)
-	fmt.Println(string(fen))
-	fmt.Println(p.turn == White)
-	fmt.Println(p.turn == Black)
+	moves := p.GetMoves(p.turn)
 
-	fmt.Fprintf(w, "Reply")
+	rand.Seed(time.Now().Unix())
+	i := rand.Intn(len(moves))
+
+	newPosition := p.ApplyMove(moves[i])
+
+	fmt.Fprintf(w, PositionToBoardFen(&newPosition))
 
 }
 
