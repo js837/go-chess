@@ -77,20 +77,16 @@ func (node *EvalNode) GenerateTree(depth int) {
 //	}
 //}
 
-func BestMove(node *Position, depth int, maximizingPlayer Colour) float64 {
-	if depth == 0 {
-		v := node.PieceEval(maximizingPlayer.Switch())
-		return v
-	}
+//func BestMove(node *Position, maximizingPlayer Colour) Position {
 
-	moves := node.GetMoves(maximizingPlayer)
-	if len(moves) == 0 {
-		return node.PieceEval(maximizingPlayer)
-	}
+//	moves := node.GetMoves(maximizingPlayer)
+//	if len(moves) == 0 {
+//		return node.PieceEval(maximizingPlayer)
+//	}
 
-	var bestValue float64
+//	var bestValue float64
 
-}
+//}
 
 func (position *Position) PieceEval(colour Colour) float64 {
 	// Gives evaluation heurisitc of board w.r.t. colour
