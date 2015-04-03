@@ -6,7 +6,7 @@ import (
 
 func TestPositionFromBoardFen(t *testing.T) {
 
-	board := PositionFromBoardFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR").board
+	pos := FromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b Q b2 23 10")
 	starting_board := Board{
 		WR, WN, WB, WQ, WK, WB, WN, WR,
 		WP, WP, WP, WP, WP, WP, WP, WP,
@@ -18,7 +18,24 @@ func TestPositionFromBoardFen(t *testing.T) {
 		BR, BN, BB, BQ, BK, BB, BN, BR,
 	}
 
-	if board != starting_board {
-		t.Error("Starting board incorrect.")
+	if pos.board != starting_board {
+		t.Error("Board")
 	}
+	c := Castling{false, true, false, false}
+	if pos.castling != c {
+		t.Error("Castling")
+	}
+	if pos.enPassant != 9 {
+		t.Error("En passant")
+	}
+	if pos.turn != Black {
+		t.Error("Turn")
+	}
+	if pos.halfMoves != 23 {
+		t.Error("Half moves")
+	}
+	if pos.fullMoves != 10 {
+		t.Error("Full moves")
+	}
+
 }

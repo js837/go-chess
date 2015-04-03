@@ -13,11 +13,14 @@ func SetFen(w http.ResponseWriter, request *http.Request) {
 	defer request.Body.Close()
 	fen, _ := ioutil.ReadAll(request.Body)
 
-	p := PositionFromBoardFen(string(fen))
+	p := FromFen(string(fen))
 
-	fmt.Println("Best")
+	fmt.Println(p)
+	fmt.Println(string(fen))
+	fmt.Println(p.turn == White)
+	fmt.Println(p.turn == Black)
 
-	fmt.Fprintf(w, PositionToBoardFen(&p))
+	fmt.Fprintf(w, "Reply")
 
 }
 
@@ -26,5 +29,5 @@ func main() {
 	http.HandleFunc("/setfen", SetFen)
 
 	http.Handle("/", http.FileServer(http.Dir(".")))
-	http.ListenAndServe(":8005", nil)
+	http.ListenAndServe(":8000", nil)
 }

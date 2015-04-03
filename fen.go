@@ -5,104 +5,78 @@ import (
 	"strings"
 )
 
-//func PositionFromFen(fen string) Position {
-//	// Examples:
-//	// rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-//	// rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2
+func FromFen(fen string) Position {
+	components := strings.Split(fen, " ")
 
-//	components := strings.Split("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2", " ")
-//}
+	boardStr := components[0]
+	turnStr := components[1]
+	castlingStr := components[2]
+	enPassantStr := components[3]
+	halfMovesStr := components[4]
+	fullMovesStr := components[5]
 
-func getPiece(char rune) Piece {
+	board := boardFromFen(boardStr)
+	turn := turnFromFen(turnStr)
+	castling := castlingFromFen(castlingStr)
+	enPassant := enPassantFromFen(enPassantStr)
+	halfMoves, _ := strconv.Atoi(halfMovesStr)
+	fullMoves, _ := strconv.Atoi(fullMovesStr)
 
-	switch char {
-	case 'P':
-		return WP
-	case 'N':
-		return WN
-	case 'B':
-		return WB
-	case 'R':
-		return WR
-	case 'Q':
-		return WQ
-	case 'K':
-		return WK
+	return Position{board, turn, castling, enPassant, halfMoves, fullMoves, 0}
+}
 
-	case 'p':
-		return BP
-	case 'n':
-		return BN
-	case 'b':
-		return BB
-	case 'r':
-		return BR
-	case 'q':
-		return BQ
-	case 'k':
-		return BK
+var rankLookup = map[byte]int{'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7}
+var fileLookup = map[byte]int{'1': 0, '2': 1, '3': 2, '4': 3, '5': 4, '6': 5, '7': 6, '8': 7}
 
-	default:
-		return NoPiece
+func enPassantFromFen(enPassantStr string) int {
+	if enPassantStr == "-" {
+		return EMPTY_ENPASSANT
+	}
+
+	rank := rankLookup[enPassantStr[0]]
+	file := fileLookup[enPassantStr[1]]
+
+	return SquareFromRankFile(rank, file)
+}
+
+func castlingFromFen(castlingStr string) Castling {
+	whiteKingside := strings.Contains(castlingStr, "K")
+	whiteQueenside := strings.Contains(castlingStr, "Q")
+	blackKingside := strings.Contains(castlingStr, "k")
+	blackQueenside := strings.Contains(castlingStr, "q")
+
+	return Castling{whiteKingside, whiteQueenside, blackKingside, blackQueenside}
+}
+
+func turnFromFen(turnStr string) Colour {
+	if turnStr == "w" {
+		return White
+	} else {
+		return Black
 	}
 }
 
-func getChar(piece Piece) rune {
-
-	switch piece {
-	case WP:
-		return 'P'
-	case WN:
-		return 'N'
-	case WB:
-		return 'B'
-	case WR:
-		return 'R'
-	case WQ:
-		return 'Q'
-	case WK:
-		return 'K'
-
-	case BP:
-		return 'p'
-	case BN:
-		return 'n'
-	case BB:
-		return 'b'
-	case BR:
-		return 'r'
-	case BQ:
-		return 'q'
-	case BK:
-		return 'k'
-	default:
-		return '-'
-	}
-
-}
-
-func PositionFromBoardFen(boardFen string) Position {
-	// boardFen eg. rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR
-	// TODO: Add error checking.
-	position := Position{}
+func boardFromFen(boardStr string) Board {
+	// boardStr eg. rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR
+	board := Board{}
 	var index int
-	for k, rankStr := range strings.Split(boardFen, "/") {
+	for k, rankStr := range strings.Split(boardStr, "/") {
 		index = (7 - k) * 8
 		for _, char := range rankStr {
 			piece := getPiece(char)
 			if piece == NoPiece {
 				n, _ := strconv.Atoi(string(char))
 				for m := 0; m < n; m++ {
-					position.board[index] = NoPiece
+					board[index] = NoPiece
 					index++
 				}
 			} else {
-				position.board[index] = piece
+				board[index] = piece
 				index++
 			}
 		}
 	}
-	return position
+	return board
 }
 
 func PositionToBoardFen(p *Position) string {

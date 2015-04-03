@@ -45,9 +45,11 @@ func (p *Position) ApplyMove(m Move) Position {
 	newPosition := Position{
 		newBoard,
 		p.turn.Switch(),
-		p.score,
 		p.castling,
 		p.enPassant,
+		p.halfMoves,
+		p.fullMoves,
+		p.score,
 	}
 	return newPosition
 }

@@ -38,9 +38,13 @@ $(document).ready(function() {
   $('#startBtn').on('click', board.start);
   $('#clearBtn').on('click', board.clear);
   $('#submitBtn').on('click', function(){
-      $.post('setfen', board.fen()).done(function(fen){
-		  console.log(fen)
-		  board.position(fen);
+	  
+	  var boardFen = board.fen()
+	  var fen = boardFen + ' b KQkq b2 0 1' 
+	
+      $.post('setfen', fen).done(function(fenNew){
+		  console.log(fenNew)
+		  board.position(fenNew);
 	  })
   });
 
