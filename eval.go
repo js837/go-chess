@@ -11,13 +11,10 @@ const (
 	PAWN_WEIGHT   = 10
 )
 
-func (position *Position) PieceEval(colour Colour) float64 {
-	// Gives evaluation heurisitc of board w.r.t. colour
+func (position *Position) QuickEval() int64 {
 
-	// Requires a channel of pieces to work on
-
-	var eval float64 = 0
-	var pieceValue float64
+	var eval int64 = 0
+	var pieceValue int64
 
 	for _, piece := range position.board {
 		switch piece.Type() {
@@ -36,7 +33,7 @@ func (position *Position) PieceEval(colour Colour) float64 {
 		default:
 			pieceValue = 0
 		}
-		if piece.Colour() == colour {
+		if piece.Colour() == White {
 			eval += +1 * pieceValue
 		} else {
 			eval += -1 * pieceValue

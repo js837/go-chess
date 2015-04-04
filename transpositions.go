@@ -15,7 +15,7 @@ type TranspositionKey struct {
 
 type Transposition struct {
 	depth int
-	eval  float64
+	eval  int64
 }
 
 const TABLE_SIZE int = 131072
@@ -23,7 +23,7 @@ const TABLE_SIZE int = 131072
 // Note we should build our own hash table to limit space.
 type TranspositionTable map[TranspositionKey]Transposition
 
-func (table TranspositionTable) LookupPosition(position *Position) (int, float64) {
+func (table TranspositionTable) LookupPosition(position *Position) (int, int64) {
 	var key TranspositionKey = TranspositionKey{
 		position.board,
 		position.turn,
@@ -40,7 +40,7 @@ func (table TranspositionTable) LookupPosition(position *Position) (int, float64
 
 }
 
-func (table TranspositionTable) SetPosition(position *Position, depth int, eval float64) {
+func (table TranspositionTable) SetPosition(position *Position, depth int, eval int64) {
 	var key TranspositionKey = TranspositionKey{
 		position.board,
 		position.turn,
