@@ -25,7 +25,7 @@ func (p *Position) GetBestMove(depth int, colour Colour) Position {
 
 	for _, move := range p.GetMoves(colour) {
 		newPosition := p.ApplyMove(move)
-		eval := minimax(&newPosition, depth, colour.Switch())
+		eval := alphabeta(&newPosition, depth, -EVAL_MAX, +EVAL_MAX, colour.Switch())
 		if colour == White {
 			if eval > bestEval {
 				bestEval = eval
@@ -40,6 +40,42 @@ func (p *Position) GetBestMove(depth int, colour Colour) Position {
 	}
 	fmt.Println(bestEval)
 	return bestPosition
+}
+
+func alphabeta(p *Position, depth int, alpha int, beta int, colour Colour) int {
+	if depth == 0 {
+		return p.QuickEval()
+	}
+
+	moves := p.GetMoves(colour)
+	if len(moves) == 0 {
+		return p.QuickEval()
+	}
+
+	if colour == White {
+		v := -EVAL_MAX
+		for _, move := range moves {
+			child := p.ApplyMove(move)
+			v = max(v, alphabeta(&child, depth-1, alpha, beta, Black))
+			alpha := max(alpha, v)
+			if beta <= alpha {
+				break // beta cut off
+			}
+		}
+		return v
+	} else {
+		v := EVAL_MAX
+		for _, move := range moves {
+			child := p.ApplyMove(move)
+			v = min(v, alphabeta(&child, depth-1, alpha, beta, White))
+			beta := min(beta, v)
+			if beta <= alpha {
+				break // alpha cut off
+			}
+		}
+		return v
+	}
+	return 0
 }
 
 func minimax(p *Position, depth int, colour Colour) int {
