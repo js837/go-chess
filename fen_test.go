@@ -28,9 +28,6 @@ func TestPositionFromBoardFen(t *testing.T) {
 	if pos.enPassant != 9 {
 		t.Error("En passant")
 	}
-	if pos.turn != Black {
-		t.Error("Turn")
-	}
 	if pos.halfMoves != 23 {
 		t.Error("Half moves")
 	}

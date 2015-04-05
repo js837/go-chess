@@ -8,7 +8,7 @@ func min(a, b int) int {
 	}
 }
 
-func min64(a, b float64) float64 {
+func min64(a, b int64) int64 {
 	if a <= b {
 		return a
 	} else {
@@ -24,7 +24,7 @@ func max(a, b int) int {
 	}
 }
 
-func max64(a, b float64) float64 {
+func max64(a, b int64) int64 {
 	if a <= b {
 		return b
 	} else {

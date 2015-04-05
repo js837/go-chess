@@ -216,7 +216,7 @@ func PawnMoves(p *Position, from int) []Move {
 	// Promotion (only Queen for now)
 	var promotion Piece
 	if rank == localPromoRank {
-		promotion = Queen
+		promotion = Piece(Queen | p.turn)
 	} else {
 		promotion = NoPiece
 	}

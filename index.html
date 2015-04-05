@@ -13,9 +13,14 @@
 <input type="button" id="startBtn" value="Start" />
 <input type="button" id="clearBtn" value="Clear" />
 
-<div class="random">
+<div class="random-moves">
 	<input type="button" id="playRandomWhite" value="Random white" />
 	<input type="button" id="playRandomBlack" value="Random black" />
+</div>
+
+<div class="best-moves">
+	<input type="button" id="playBestWhite" value="Best white" />
+	<input type="button" id="playBestBlack" value="Best black" />
 </div>
 
 
@@ -36,11 +41,11 @@ $(document).ready(function() {
 
   board.start()
  
-  function playRandomColour(colour){
+  function playColour(url, colour){
 	var boardFen = board.fen()
 	var rest = 'KQkq - 0 0'
 	var fen = boardFen + ' ' + colour + ' ' + rest
-	  $.post('random', fen).done(function(fenNew){
+	  $.post(url, fen).done(function(fenNew){
 		  console.log(fen, '->', fenNew)
 		  board.position(fenNew);
 	  })
@@ -49,8 +54,12 @@ $(document).ready(function() {
   $('#startBtn').on('click', board.start);
   $('#clearBtn').on('click', board.clear);
   
-  $('#playRandomWhite').on('click', playRandomColour.bind(this, 'w'));
-  $('#playRandomBlack').on('click', playRandomColour.bind(this, 'b'));
+  $('#playRandomWhite').on('click', playColour.bind(this, 'random', 'w'));
+  $('#playRandomBlack').on('click', playColour.bind(this, 'random', 'b'));
+
+  $('#playBestWhite').on('click', playColour.bind(this, 'best', 'w'));
+  $('#playBestBlack').on('click', playColour.bind(this, 'best', 'b'));
+
 
 });
 </script>
