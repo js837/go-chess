@@ -14,7 +14,7 @@ func BestMove(w http.ResponseWriter, request *http.Request) {
 	fen, _ := ioutil.ReadAll(request.Body)
 	p := FromFen(string(fen))
 
-	newPosition := p.GetBestMove(4, p.turn)
+	newPosition := p.GetBestMove(3, p.turn)
 
 	fmt.Fprintf(w, PositionToBoardFen(&newPosition))
 }

@@ -25,7 +25,7 @@ func (p *Position) GetBestMove(depth int, colour Colour) Position {
 
 	for _, move := range p.GetMoves(colour) {
 		newPosition := p.ApplyMove(move)
-		eval := alphabeta(&newPosition, depth, -EVAL_MAX, +EVAL_MAX, colour.Switch())
+		eval := minimax(&newPosition, depth, colour.Switch())
 		if colour == White {
 			if eval > bestEval {
 				bestEval = eval
