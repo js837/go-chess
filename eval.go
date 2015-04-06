@@ -13,6 +13,8 @@ const (
 
 const EVAL_MAX int = 10000000
 
+var table TranspositionTable
+
 func (p *Position) GetBestMove(depth int, colour Colour) Position {
 	var bestEval int
 	var bestPosition Position
@@ -25,7 +27,7 @@ func (p *Position) GetBestMove(depth int, colour Colour) Position {
 
 	for _, move := range p.GetMoves(colour) {
 		newPosition := p.ApplyMove(move)
-		eval := minimax(&newPosition, depth, colour.Switch())
+		eval := alphabeta(&newPosition, depth, -EVAL_MAX, +EVAL_MAX, colour.Switch())
 		if colour == White {
 			if eval > bestEval {
 				bestEval = eval
@@ -56,6 +58,7 @@ func alphabeta(p *Position, depth int, alpha int, beta int, colour Colour) int {
 		v := -EVAL_MAX
 		for _, move := range moves {
 			child := p.ApplyMove(move)
+
 			v = max(v, alphabeta(&child, depth-1, alpha, beta, Black))
 			alpha := max(alpha, v)
 			if beta <= alpha {

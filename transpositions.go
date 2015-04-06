@@ -7,43 +7,41 @@ This is used to store results of evalutions of moves.
 */
 
 type TranspositionKey struct {
-	board     Board
 	turn      Colour
+	board     Board
 	castling  Castling // Castling rights
 	enPassant int      // En passant square
 }
 
 type Transposition struct {
 	depth int
-	eval  int64
+	eval  int
 }
-
-const TABLE_SIZE int = 131072
 
 // Note we should build our own hash table to limit space.
 type TranspositionTable map[TranspositionKey]Transposition
 
-func (table TranspositionTable) LookupPosition(position *Position) (int, int64) {
+func (table TranspositionTable) LookupPosition(position *Position, colour Colour) (bool, int, int) {
 	var key TranspositionKey = TranspositionKey{
+		colour,
 		position.board,
-		position.turn,
 		position.castling,
 		position.enPassant,
 	}
 
 	trans, found := table[key]
 	if found {
-		return trans.depth, trans.eval
+		return true, trans.depth, trans.eval
 	} else {
-		return -1, 0
+		return false, 0, 0
 	}
 
 }
 
-func (table TranspositionTable) SetPosition(position *Position, depth int, eval int64) {
+func (table TranspositionTable) SetPosition(colour Colour, position *Position, depth int, eval int) {
 	var key TranspositionKey = TranspositionKey{
+		colour,
 		position.board,
-		position.turn,
 		position.castling,
 		position.enPassant,
 	}
