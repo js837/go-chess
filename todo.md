@@ -13,6 +13,12 @@
 
 
 ---
+
+
+`MEDIUM` Another Evaluation with more positional complexity
+
+---
+
 `HARD`Transposition table to store the results of previous searches.
 - Limited capacity hash table.
 
@@ -34,6 +40,3 @@
 
 `MEDIUM` Quite search caputres and pawn moves
 
----
-
-`MEDIUM` Another Evaluation with more positional complexity
