@@ -29,3 +29,11 @@
 
 - Limited capacity hash table.
 - Killer move heuristics 
+
+---
+
+`MEDIUM` Quite search caputres and pawn moves
+
+---
+
+`MEDIUM` Another Evaluation with more positional complexity
