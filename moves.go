@@ -19,10 +19,10 @@ func (moves Moves) Swap(i, j int) {
 	moves[i], moves[j] = moves[j], moves[i]
 }
 func (moves Moves) Less(i, j int) bool {
-	if moves[i].capture == false && moves[j].capture == true {
-		return false
+	if moves[i].capture == true && moves[j].capture == false {
+		return true
 	}
-	return true
+	return false
 }
 
 func (p *Position) GetMoves(colour Colour) []Move {

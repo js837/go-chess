@@ -13,12 +13,12 @@ func (p *Position) GetBestMove(depth int, colour Colour) (Move, Position) {
 		bestEval = +EVAL_MAX
 	}
 
-	var cutOffs int = 0
+	var evalHits int = 0
 
 	for _, move := range p.GetMoves(colour) {
 		newPosition := p.ApplyMove(move)
 
-		eval := alphabeta(&newPosition, depth, colour.Switch(), -EVAL_MAX, +EVAL_MAX, &cutOffs)
+		eval := alphabeta(&newPosition, depth, colour.Switch(), -EVAL_MAX, +EVAL_MAX, &evalHits)
 		//eval := iterDeep(&newPosition, depth, colour.Switch())
 
 		if colour == White {
@@ -36,7 +36,7 @@ func (p *Position) GetBestMove(depth int, colour Colour) (Move, Position) {
 		}
 	}
 	fmt.Println("Best eval:", bestEval)
-	fmt.Println("Cutoffs:", cutOffs)
+	fmt.Println("evalHits:", evalHits)
 	return bestMove, bestPosition
 }
 
@@ -47,26 +47,26 @@ type TreeKey struct {
 }
 
 func iterDeep(newPosition *Position, maxDepth int, colour Colour) int {
-	var cutOffs int = 0
+	var evalHits int = 0
 	var eval int
-	//var iterTree map[TreeKey]int
 
 	for depth := 0; depth <= maxDepth; depth++ {
-		cutOffs = 0
-		eval = alphabeta(newPosition, depth, colour, -EVAL_MAX, +EVAL_MAX, &cutOffs)
+		eval = alphabeta(newPosition, depth, colour, -EVAL_MAX, +EVAL_MAX, &evalHits)
 	}
 
 	return eval
 }
 
-func alphabeta(p *Position, depth int, colour Colour, alpha int, beta int, cutOffs *int) int {
+func alphabeta(p *Position, depth int, colour Colour, alpha int, beta int, evalHits *int) int {
 	if depth == 0 {
+		*evalHits++
 		return p.QuickEval()
 	}
 
 	moves := p.GetMoves(colour)
 
 	if len(moves) == 0 {
+		*evalHits++
 		return p.QuickEval()
 	}
 
@@ -75,10 +75,9 @@ func alphabeta(p *Position, depth int, colour Colour, alpha int, beta int, cutOf
 		for _, move := range moves {
 			child := p.ApplyMove(move)
 
-			v = max(v, alphabeta(&child, depth-1, Black, alpha, beta, cutOffs))
+			v = max(v, alphabeta(&child, depth-1, Black, alpha, beta, evalHits))
 			alpha = max(alpha, v)
 			if beta <= alpha {
-				*cutOffs++
 				break // beta cut off
 			}
 		}
@@ -87,11 +86,10 @@ func alphabeta(p *Position, depth int, colour Colour, alpha int, beta int, cutOf
 		v := EVAL_MAX
 		for _, move := range moves {
 			child := p.ApplyMove(move)
-			v = min(v, alphabeta(&child, depth-1, White, alpha, beta, cutOffs))
+			v = min(v, alphabeta(&child, depth-1, White, alpha, beta, evalHits))
 			beta = min(beta, v)
 
 			if beta <= alpha {
-				*cutOffs++
 				break // alpha cut off
 			}
 		}

@@ -28,7 +28,7 @@ func TestIterDeep(t *testing.T) {
 
 	pos := FromFen("rnb1kb1r/p1qpp2p/8/1p2Ppp1/1PB5/P2p2P1/Q4P1P/R1B1K1nR w KQkq - 0 0")
 
-	if alphabeta(&pos, 6, White, -EVAL_MAX, +EVAL_MAX, &cutoffs) != iterDeep(&pos, 6, White) {
+	if alphabeta(&pos, 5, White, -EVAL_MAX, +EVAL_MAX, &cutoffs) != iterDeep(&pos, 5, White) {
 		t.Error("Iter deep is wrong")
 	}
 
@@ -40,7 +40,7 @@ func TestCutoffs(t *testing.T) {
 
 	pos := FromFen("rnb1kb1r/p1qpp2p/8/1p2Ppp1/1PB5/P2p2P1/Q4P1P/R1B1K1nR w KQkq - 0 0")
 
-	alphabeta(&pos, 8, White, -EVAL_MAX, +EVAL_MAX, &cutoffs)
+	alphabeta(&pos, 5, White, -EVAL_MAX, +EVAL_MAX, &cutoffs)
 	fmt.Println("Cut offs:", cutoffs)
 
 }

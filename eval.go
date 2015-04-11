@@ -17,7 +17,7 @@ func (position *Position) QuickEval() int {
 	var pieceValue int
 
 	// Obviously inefficient.
-	eval += +1*len(position.GetMoves(White)) + -1*len(position.GetMoves(Black))
+	//eval += +1*len(position.GetMoves(White)) + -1*len(position.GetMoves(Black))
 
 	for _, piece := range position.board {
 		switch piece.Type() {
