@@ -14,12 +14,12 @@ func BestMove(w http.ResponseWriter, request *http.Request) {
 	fen, _ := ioutil.ReadAll(request.Body)
 	p := FromFen(string(fen))
 
-	bestMove, _ := p.GetBestMove(4, p.turn)
+	bestMove, bestPosition := p.GetBestMove(4, p.turn)
 
 	fmt.Println(bestMove)
 	fmt.Println(string(fen))
 
-	fmt.Fprintf(w, PositionToBoardFen(&p))
+	fmt.Fprintf(w, PositionToBoardFen(&bestPosition))
 }
 
 func RandomMove(w http.ResponseWriter, request *http.Request) {
