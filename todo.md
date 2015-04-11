@@ -23,7 +23,7 @@
 ---
 
 
-`VERY HARD`Order move search via iterative deepening
+`HARD`Order move search via iterative deepening
 
 - Limited capacity hash table.
 - Killer move heuristics 
