@@ -9,9 +9,11 @@
 
 
 ---
+`MEDIUM` Bitboard implementation
 
+
+---
 `HARD`Transposition table to store the results of previous searches.
-
 - Limited capacity hash table.
 
 
