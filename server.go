@@ -3,37 +3,45 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	//"math/rand"
+	"math/rand"
 	"net/http"
-	//"time"
+	"time"
 )
 
-func SetFen(w http.ResponseWriter, request *http.Request) {
+func BestMove(w http.ResponseWriter, request *http.Request) {
 
 	defer request.Body.Close()
 	fen, _ := ioutil.ReadAll(request.Body)
+	p := FromFen(string(fen))
 
-	p := PositionFromBoardFen(string(fen))
-	//	for _, move := range p.GetMoves(p.turn) {
-	//		fmt.Println(move)
-	//	}
+	bestMove, _ := p.GetBestMove(4, p.turn)
 
-	var moves []Move
+	fmt.Println(bestMove)
+	//fmt.Println(string(fen))
 
-	for i := 0; i < 1000000; i++ {
-		moves = p.GetMoves(p.turn)
-		for _, move := range moves {
-			p.ApplyMove(move)
-		}
-	}
+	fmt.Fprintf(w, PositionToBoardFen(&p))
+}
 
-	fmt.Fprintf(w, string(fen))
+func RandomMove(w http.ResponseWriter, request *http.Request) {
+
+	defer request.Body.Close()
+	fen, _ := ioutil.ReadAll(request.Body)
+	p := FromFen(string(fen))
+
+	moves := p.GetMoves(p.turn)
+
+	rand.Seed(time.Now().Unix())
+	i := rand.Intn(len(moves))
+	newPosition := p.ApplyMove(moves[i])
+
+	fmt.Fprintf(w, PositionToBoardFen(&newPosition))
 }
 
 func main() {
 
-	http.HandleFunc("/setfen", SetFen)
+	http.HandleFunc("/random", RandomMove)
+	http.HandleFunc("/best", BestMove)
 
 	http.Handle("/", http.FileServer(http.Dir(".")))
-	http.ListenAndServe(":8000", nil)
+	http.ListenAndServe(":9000", nil)
 }
