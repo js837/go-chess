@@ -1,11 +1,11 @@
 ### TODO:
 
 
-`MEDIUM` Enpassant and castling
+`EASY` Enpassant and castling
 
 ---
 
-`MEDIUM` Checkmate and stalemate
+`EASY` Checkmate and stalemate
 
 
 ---
@@ -30,6 +30,9 @@
 
 ---
 
+`MEDIUM` Opening book implementation
+
+---
 
 `HARD`Order move search via iterative deepening
 
@@ -38,5 +41,5 @@
 
 ---
 
-`MEDIUM` Quite search caputres and pawn moves
+`MEDIUM` Quite search captures and pawn moves
 
