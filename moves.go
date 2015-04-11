@@ -1,15 +1,32 @@
 package main
 
 //import "fmt"
+import "sort"
 
 type Move struct {
 	from      int
 	to        int
 	promotion Piece
+	capture   bool
+}
+
+type Moves []Move
+
+func (moves Moves) Len() int {
+	return len(moves)
+}
+func (moves Moves) Swap(i, j int) {
+	moves[i], moves[j] = moves[j], moves[i]
+}
+func (moves Moves) Less(i, j int) bool {
+	if moves[i].capture == false && moves[j].capture == true {
+		return false
+	}
+	return true
 }
 
 func (p *Position) GetMoves(colour Colour) []Move {
-	var moves = []Move{}
+	var moves = make([]Move, 0, 20)
 	for from, piece := range p.board {
 		if piece.Colour() == colour {
 			switch piece.Type() {
@@ -28,6 +45,7 @@ func (p *Position) GetMoves(colour Colour) []Move {
 			}
 		}
 	}
+	sort.Sort(Moves(moves))
 	return moves
 }
 
@@ -73,11 +91,11 @@ func RookMoves(p *Position, from int) []Move {
 			to := from + mult*directions[dir]
 			if p.board[to] == NoPiece {
 				// Empty space
-				moves = append(moves, Move{from, to, NoPiece})
+				moves = append(moves, Move{from, to, NoPiece, false})
 			} else {
 				// Hit a piece
 				if p.board[to].Colour() != myColour {
-					moves = append(moves, Move{from, to, NoPiece})
+					moves = append(moves, Move{from, to, NoPiece, true})
 				}
 				break
 			}
@@ -108,8 +126,10 @@ func KnightMoves(p *Position, from int) []Move {
 			for _, j := range a {
 				if multLimits[j] >= 1 {
 					to := from + 2*dir + dirs[j]
-					if p.board[to] == NoPiece || p.board[to].Colour() != myColour {
-						moves = append(moves, Move{from, to, NoPiece})
+					if p.board[to] == NoPiece {
+						moves = append(moves, Move{from, to, NoPiece, false})
+					} else if p.board[to].Colour() != myColour {
+						moves = append(moves, Move{from, to, NoPiece, true})
 					}
 				}
 			}
@@ -142,11 +162,11 @@ func KingMoves(p *Position, from int) []Move {
 			to := from + mult*directions[dir]
 			if p.board[to] == NoPiece {
 				// Empty space
-				moves = append(moves, Move{from, to, NoPiece})
+				moves = append(moves, Move{from, to, NoPiece, false})
 			} else {
 				// Hit a piece
 				if p.board[to].Colour() != myColour {
-					moves = append(moves, Move{from, to, NoPiece})
+					moves = append(moves, Move{from, to, NoPiece, true})
 				}
 				break
 			}
@@ -176,11 +196,11 @@ func BishopMoves(p *Position, from int) []Move {
 			to := from + mult*directions[dir]
 			if p.board[to] == NoPiece {
 				// Empty space
-				moves = append(moves, Move{from, to, NoPiece})
+				moves = append(moves, Move{from, to, NoPiece, false})
 			} else {
 				// Hit a piece
 				if p.board[to].Colour() != myColour {
-					moves = append(moves, Move{from, to, NoPiece})
+					moves = append(moves, Move{from, to, NoPiece, true})
 				}
 				break
 			}
@@ -223,21 +243,21 @@ func PawnMoves(p *Position, from int) []Move {
 
 	// Single move
 	if to := from + localN; p.board[to] == NoPiece {
-		moves = append(moves, Move{from, to, promotion})
+		moves = append(moves, Move{from, to, promotion, false})
 
 		// Double move
 		if to = to + localN; rank == localFirstRank && p.board[to] == NoPiece {
-			moves = append(moves, Move{from, to, NoPiece})
+			moves = append(moves, Move{from, to, NoPiece, false})
 		}
 
 	}
 	// Take NE
 	if to := from + localN + E; file != 7 && p.board[to] != NoPiece && p.board[to].Colour() != myColour {
-		moves = append(moves, Move{from, to, promotion})
+		moves = append(moves, Move{from, to, promotion, true})
 	}
 	// Take NW
 	if to := from + localN + W; file != 0 && p.board[to] != NoPiece && p.board[to].Colour() != myColour {
-		moves = append(moves, Move{from, to, promotion})
+		moves = append(moves, Move{from, to, promotion, true})
 	}
 
 	return moves

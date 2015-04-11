@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -26,7 +27,10 @@ func FromFen(fen string) Position {
 }
 
 var rankLookup = map[byte]int{'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7}
+var reverseRankLookup = map[int]byte{0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g', 7: 'h'}
+
 var fileLookup = map[byte]int{'1': 0, '2': 1, '3': 2, '4': 3, '5': 4, '6': 5, '7': 6, '8': 7}
+var reverseFileLookup = map[int]byte{0: '1', 1: '2', 2: '3', 3: '4', 4: '5', 5: '6', 6: '7', 7: '8'}
 
 func enPassantFromFen(enPassantStr string) int {
 	if enPassantStr == "-" {
@@ -111,4 +115,13 @@ func PositionToBoardFen(p *Position) string {
 		}
 	}
 	return boardFen
+}
+
+func GetStrRankFile(i int) string {
+	rank, file := GetRankFile(i)
+	return string(reverseRankLookup[rank]) + string(reverseFileLookup[file])
+}
+
+func MoveLongAlgebraic(m *Move) string {
+	return fmt.Sprintf("%v %v -", GetStrRankFile(m.to), GetStrRankFile(m.from))
 }
