@@ -14,7 +14,7 @@ func BestMove(w http.ResponseWriter, request *http.Request) {
 	fen, _ := ioutil.ReadAll(request.Body)
 	p := FromFen(string(fen))
 
-	newPosition := p.GetBestMove(3, p.turn)
+	newPosition := p.GetBestMove(0, p.turn)
 
 	fmt.Fprintf(w, PositionToBoardFen(&newPosition))
 }
@@ -40,5 +40,5 @@ func main() {
 	http.HandleFunc("/best", BestMove)
 
 	http.Handle("/", http.FileServer(http.Dir(".")))
-	http.ListenAndServe(":8000", nil)
+	http.ListenAndServe(":9000", nil)
 }
